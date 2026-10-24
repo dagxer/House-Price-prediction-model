@@ -6,3 +6,8 @@ Considering this is my first time dealing with this type of project I will be wr
 
 2nd problem: when I was making my x.fillin(x.median()) I originally had it as pd.fillin(pd.median()) because I did not realize that once you used .concat() make x a pandas dataset so we can use x.fillin because its recognzied as pd (or at least thats how I made sense of it)
 
+3rd problem: when I was doing the Model creation using torch nn I was unaware how it worked so I did have to look into that. From what I understand what Im doing is taking the features of our training set and breaking it down from F-->64 so the model will find things that dont change value in the feature set and then account for it. Then I went ahead and used nn.ReLU which will take all numbers and make clip any that are negative to make sure we get a non linear model. Then we take the 64 convert to 1 value which will be used to find the price in dollars.
+
+4th problem: I forgot initally I needed a way to graph the output so I added the matplotlib.
+
+
