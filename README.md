@@ -11,3 +11,16 @@ Considering this is my first time dealing with this type of project I will be wr
 4th problem: I forgot initally I needed a way to graph the output so I added the matplotlib.
 
 
+So I have finally finished but of course as expected the model is off. Attached to the Repo is a new folder called figures
+this is where I will be refrencing things from.
+
+The Problem:
+Figure_1 is my first finalized product you can see from Figure_1 that my validation RMSE is off by about 4X when compared to my Training RMSE. This is why when we look at my results on the right my regression line is incredibly off at some points, and although the housing market is quite bad I do not think it is bad enough for a 200k home to be predicted at 700k. 
+So what can be done to fix this, well first I need to find out why my validation RMSE is so terribly off.
+
+As I'm trying to work through my issue I realized that the validation RMSE is not entirely the reason for my scatter on the right, AdamW from pytorch uses the shrink per step formula of Learning rate * Weight decay, so with only 500 epochs there is roughly a 1.5% shrink in the weights which is practically nothing so we should add more epochs you can see in Figure_2 that the Validation RMSE and Training RMSE are still falling at 500 so that was my sign I need more aswell.
+
+The Solution:
+As you can see in Figure_3 I was able to get the Validation RMSE a lot more accurate to the Training RMSE by adding more epochs aswell as altering the weight decay and learning rate, from here I'd like to fine tune my model, there is still some error in predictions that I assume are due to things like random features being accounted for so I'll have to look into that
+I also dont like how high the RMSE is coming out, I'm not certain on why it acts like that.
+
