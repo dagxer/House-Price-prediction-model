@@ -14,10 +14,14 @@ y = torch.log1p(torch.tensor(train["SalePrice"].values, dtype = torch.float32)).
 x = pd.concat([train.drop(columns=["SalePrice"]), test]).drop(columns=["PID"])
 # converts the data into 1.0 and 0.0 form
 x = pd.get_dummies(x).astype("float32")
+# print(x.sum().sort_values().head(15))
 # fills the empty sections with the median to avoid getting zeros because that can mess up the math
 x = x.fillna(x.median())
+
 # this takes the values of x and converts everything into a smaller value for example say you have a house with 2 BR's and 2000 SqFt then [2, 2000] the network then will only look at sqft because its overpowering the BR's
 x = (x - x.median()) / (x.std() + 1e-8) #1e-8 is added to prevent division by 0
+x = x.clip(-5, 5)
+# print(x.abs().max().sort_values(ascending=False).head(10))
 
 # So the n varible is the list of pandas training numbers
 n = len(train)
@@ -34,14 +38,14 @@ training, validation = idx[:int(0.8 * n)], idx[int(0.8 * n):]
 #the models hidden layer
 #the train shape is take the F features of x_train and creates 64 different weighted summaries  then we make it nonlinear and then we blend 64 features into 1 which will be used to find our price
 model = nn.Sequential(nn.Linear(x_train.shape[1], 64), nn.ReLU(), nn.Linear(64,1))
-opt = torch.optim.AdamW(model.parameters(), lr = 0.01, weight_decay=1e-4)
+opt = torch.optim.AdamW(model.parameters(), lr = 0.003, weight_decay=1e-2)
 loss_fn = nn.MSELoss()
 
 
 # below is for all the actual training aswell as the plotting
 # steps: predict, score predictions, work out what weights cause error, adjust them, test on held out houses but dont learn from it, record scores
 train_losses, val_losses = [], []
-for epoch in range(501):
+for epoch in range(1000):
     loss = loss_fn(model(x_train[training]), y[training])
     opt.zero_grad()
     loss.backward()
@@ -54,7 +58,7 @@ for epoch in range(501):
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
 # plot 1: loss curves
-ax1.plot(train_losses, label="Train")
+ax1.plot(train_losses, label="Training")
 ax1.plot(val_losses, label="Validation")
 ax1.set_xlabel("epoch")
 ax1.set_ylabel("RMSE (Log Price)")
